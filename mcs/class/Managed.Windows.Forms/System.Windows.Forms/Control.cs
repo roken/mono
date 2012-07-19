@@ -957,7 +957,10 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
-			if (!is_disposed && disposing) {
+			if (disposing) {
+				if (is_disposing || is_disposed) 
+					return;
+
 				is_disposing = true;
 				Capture = false;
 
@@ -979,9 +982,15 @@ namespace System.Windows.Forms
 					children[i].parent = null;	// Need to set to null or our child will try and remove from ourselves and crash
 					children[i].Dispose();
 				}
+
+				base.Dispose(disposing);
+
+				is_disposing = false;
+				is_disposed = true;
 			}
-			is_disposed = true;
-			base.Dispose(disposing);
+			else {
+				base.Dispose(disposing);
+			}
 		}
 		#endregion 	// Public Constructors
 
